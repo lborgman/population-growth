@@ -8,7 +8,7 @@ const fixedCircles = [
         // vx: 3.5, vy: -2.8,
         radius: 25,
         // fill: '#ff0088',
-        stroke: { color: "greenyellow", width: 5 }
+        stroke: { color: "white", width: 5 }
     },
     /*
     {
@@ -44,6 +44,12 @@ console.log({ cBcr });
 // debugger;
 canvas.width = cBcr.width;
 canvas.height = cBcr.height;
+const canvasW = canvas.width;
+
+/** @param {number} popBillion @returns {number} */
+function population2radius(popBillion) {
+    return popBillion * canvasW * 0.3 / 8;
+}
 
 
 const ctx = canvas.getContext('2d');
@@ -52,38 +58,112 @@ if (ctx == null) {
     throw Error(`ctx is null`);
 }
 
+const startEarth = 8;
+const cXearth = canvasW * 0.5;
+const cYearth = canvasW * 0.5;
+
+const startCountry = 0.2;
+const cXcountry = canvasW * 0.4;
+const cYcountry = canvasW * 0.4;
 
 // Start the animation
-// animate();
+animate();
 
+/*
 {
-    let cX, cY;
-    debugger;
-    addCircularText("test of text", 100, cX, cY, canvas,
-        {
-            color: "red",
-        }
-    );
+    // debugger;
+    const red = { color: "red" };
+    const blue = { color: "skyblue", start: -30 };
+    const yellow = { color: "yellow" };
+    const green = { color: "green" };
+    const white = { color: "white", align: "right", kerning: -5 };
+    addCircularText("default", 100, 100, 70, canvas, { ...red });
+    addCircularText("!inside", 100, 100, 70, canvas, { ...blue, textInside: false });
+    addCircularText("!inward", 100, 100, 70, canvas, { ...yellow, inwardFacing: false });
+    addCircularText("!inward,!inside", 100, 100, 70, canvas, { ...green, inwardFacing: false, textInside: false });
+    addCircularText("1.6rem", 100, 100, 70, canvas, { ...white, fSize: "1.6rem" });
+    // addCircularText("24px", 100, 100, 70, canvas, { ...white, fSize: "24px" });
 }
+*/
 
+
+/**
+ * @param {number} cX
+ * @param {number} cY
+ * @param {number} radius
+ * @param {Object} [opts]
+ * @param {number} [opts.width]
+ * @param {string} [opts.color]
+ * @param {string} [opts.fill]
+ * @throws
+ */
+function drawCircle(cX, cY, radius, opts = {}) {
+    const {
+        width = 1,
+        color = "red",
+        fill = undefined,
+        ...rest
+    } = opts;
+    if (Object.keys(rest).length > 0) {
+        const unknownKeys = Object.keys(rest).join(", ");
+        const msg = `drawCircle, unknown keys: ${unknownKeys}`;
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+
+    if (!ctx) return; // dummy for ts
+    ctx.beginPath();
+    ctx.arc(cX, cY, radius, 0, Math.PI * 2);
+    if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+    }
+    ctx.lineWidth = width;
+    if (color) { ctx.strokeStyle = color; }
+    ctx.stroke();
+}
+/**
+ * @param {number} cX
+ * @param {number} cY
+ * @param {number} billion
+ * @param {Object} opts
+ * @param {number} opts.width
+ * @param {string} opts.color
+ * @param {string} opts.fill
+ */
+
+function drawPopulation(cX, cY, billion, opts) {
+    drawCircle(cX, cY, population2radius(billion), opts);
+}
+function drawFixed() {
+    if (!canvas) return; // dummy for ts
+    // Start
+    drawPopulation(cXearth, cYearth, startEarth, { width: 1, color: "goldenrod", fill: "goldenrod" })
+    // Country
+    drawPopulation(cXcountry, cYcountry, startCountry, { width: 1, color: "red", fill: "red" })
+    // Mean selection
+    drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" , fill: undefined});
+    // Max
+}
 function animate() {
     if (!ctx) return; // dummy for ts
     if (!canvas) return; // dummy for ts
 
     // 1. Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawFixed();
+    return;
 
     // 2. Update and draw each circle
     for (let i = 0; i < fixedCircles.length; i++) {
         const c = fixedCircles[i];
 
-        // Update position
-        // c.x += c.vx;
-        // c.y += c.vy;
-
-        // Optional: add some friction or other behaviors here
-
         // Draw fixed circles
+        const stroke = c.stroke;
+        drawCircle(c.x, c.y, c.radius, 10, stroke.color, undefined);
+
+        /*
         ctx.beginPath();
         ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
         const fill = c.fill;
@@ -91,8 +171,7 @@ function animate() {
             ctx.fillStyle = c.fill;
             ctx.fill();
         }
-
-        const stroke = c.stroke;
+        // const stroke = c.stroke;
         if (stroke) {
             const { color, width } = stroke;
             const w = width != undefined ? width : defaultLineWidth;
@@ -101,6 +180,7 @@ function animate() {
             ctx.lineWidth = w;
             ctx.stroke();
         }
+        */
     }
 
     // 3. Schedule the next frame
@@ -125,13 +205,12 @@ function animate() {
  * @param {boolean} [opts.textInside] true to show inside the diameter. False to show outside
  * @param {boolean} [opts.inwardFacing] true for base of text facing inward. false for outward
  * @param {string} [opts.fName] name of font family
- * @param {string} [opts.fSize] size of font
+ * @param {string} [opts.fSize] size of font (1rem, 16px)
  * @param {number} [opts.kerning] expand/compact gap between letters, in pixels
  * @param {string} [opts.color] text color
  * @throws
  */
-// function getCircularText(text, diameter, startAngle, align, textInside, inwardFacing, fName, fSize, kerning) {
-function addCircularText(text, diameter, cX, cY, canvas, opts) {
+function addCircularText(text, diameter, cX, cY, canvas, opts = {}) {
     const {
         start = 0,
         align = "center",
@@ -140,28 +219,33 @@ function addCircularText(text, diameter, cX, cY, canvas, opts) {
         fName = "sans-serif",
         fSize = "16px",
         kerning = 0,
-        color = "black"
-    } = opts | {};
-    /*
-    // text:         The text to be displayed in circular fashion
-    // diameter:     The diameter of the circle around which the text will
-    //               be displayed (inside or outside)
-    // startAngle:   In degrees, Where the text will be shown. 0 degrees
-    //               if the top of the circle
-    // align:        Positions text to left right or center of startAngle
-    // textInside:   true to show inside the diameter. False to show outside
-    // inwardFacing: true for base of text facing inward. false for outward
-    // fName:        name of font family. Make sure it is loaded
-    // fSize:        size of font family. Don't forget to include units
-    // kearning:     0 for normal gap between letters. positive or
-    //               negative number to expand/compact gap in pixels
-    //------------------------------------------------------------------------
-    */
+        color = "black",
+        ...rest
+    } = opts;
 
-    ////// declare and intialize canvas, reference, and useful variables
+    {
+        /**
+         * @param {any} v 
+         * @param {string} wantType 
+         * @throws
+         */
+        const myAssert = (v, wantType) => {
+            if (typeof wantType != "string") {
+                throw Error(`bad wantType "${typeof wantType}`);
+            }
+            const tofV = typeof v;
+            if (wantType != tofV) {
+                const msg = `Expected type "${wantType}", got "${tofV}"`;
+                console.error(msg);
+                debugger;
+                throw Error(msg);
+            }
+        }
+        myAssert(text, "string");
+        myAssert(cX, "number");
+        myAssert(cY, "number");
+    }
 
-    // align = align.toLowerCase();
-    // var mainCanvas = document.createElement('canvas');
     const ctxRef = canvas.getContext('2d');
     if (!ctxRef) {
         const msg = `canvas.getContext("2d") is null`;
@@ -211,7 +295,9 @@ function addCircularText(text, diameter, cX, cY, canvas, opts) {
     if (((["left", "center"].indexOf(align) > -1) && inwardFacing) || (align == "right" && !inwardFacing)) text = text.split("").reverse().join("");
 
     // Setup letters and positioning
-    ctxRef.translate(diameter / 2, diameter / 2); // Move to center
+    // ctxRef.translate(diameter / 2, diameter / 2); // Move to center
+    ctxRef.translate(cX, cY); // Move to center
+
     // FIX-ME:
     // startAngle += (Math.PI * !inwardFacing); // Rotate 180 if outward
     ctxRef.textBaseline = 'middle'; // Ensure we draw in exact center
@@ -242,4 +328,5 @@ function addCircularText(text, diameter, cX, cY, canvas, opts) {
     ctxRef.rotate(0);
     // Return it
     // return (mainCanvas);
+    ctxRef.setTransform(1, 0, 0, 1, 0, 0);
 }
