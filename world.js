@@ -6,29 +6,10 @@ console.log("Here is world.js");
 const mkElt = window["mkElt"];
 console.log({ mkElt });
 
-/*
-const idCanvasEarth = 'canvas-earth';
-const canvasEarth = (document.getElementById(idCanvasEarth));
-if (!canvasEarth) { debugger; throw Error(`Did not find "${idCanvasEarth}"`); }
-const bcrEarth = canvasEarth.getBoundingClientRect();
-canvasEarth.width = bcrEarth.width;
-canvasEarth.height = bcrEarth.height;
-const canvasEarthSize = canvasEarth.width;
-const ctxEarth = canvasEarth.getContext('2d');
-if (ctxEarth == null) { debugger; throw Error(`ctxEarth is null`); }
-*/
+const startEarth = 8;
 
-/*
-const idCanvasStat = 'canvas-stat';
-const canvasStat = (document.getElementById(idCanvasStat));
-if (!canvasStat) { debugger; throw Error(`Did not find "${idCanvasStat}"`); }
-const bcrStat = canvasStat.getBoundingClientRect();
-canvasStat.width = bcrStat.width;
-canvasStat.height = bcrStat.height;
-const canvasStatSize = canvasStat.width;
-const ctxStat = canvasStat.getContext('2d');
-if (ctxStat == null) { debugger; throw Error(`ctxStat is null`); }
-*/
+const startCountry = 0.2;
+
 
 const {
     canvasEarth, ctxEarth, canvasEarthSize,
@@ -52,10 +33,47 @@ function buildMain() {
     canvasStat.style.width = `${statSize}px`;
     canvasStat.style.height = `${statSize}px`;
     const ctxStat = canvasStat.getContext('2d');
-    const eltMain = mkElt("main", undefined, [
+
+
+    const inpPopSize = mkElt("input", { type: "range", name: "pop-size", min: startCountry, max: 1, step: 0.1 });
+    const valPosSize = mkElt("span", undefined, "wait...");
+    const lblPopSize = mkElt("label", undefined, [
+        valPosSize,
+        " billion"
+    ]);
+    inpPopSize.addEventListener("change", evt => {
+        valPosSize.textContent = inpPopSize.value;
+    });
+    const eltPopSize = mkElt("span", undefined, [
+        "Statistical unit",
+        inpPopSize,
+        lblPopSize
+    ]);
+    eltPopSize.style = `
+        display: flex;
+        flex-direction: column;
+    `;
+    const eltControls = mkElt("span", undefined, [
+        eltPopSize
+    ]);
+    eltControls.style = `
+        padding: 8px;
+        outline: 2px dotted blue;
+    `;
+    const eltStat = mkElt("div", undefined, [
         canvasStat,
+        eltControls
+    ]);
+    eltStat.style = `
+        outLine: 8px dotted blue;
+        display: flex;
+        gap: 10px;
+    `;
+    const eltMain = mkElt("main", undefined, [
+        eltStat,
         canvasEarth
     ]);
+
     const body = document.body.querySelector("main");
     body?.appendChild(eltMain);
     return {
@@ -100,13 +118,6 @@ function population2radius(popBillion) {
 
 
 
-const startEarth = 8;
-const cXearth = canvasEarthSize * 0.5;
-const cYearth = canvasEarthSize * 0.5;
-
-const startCountry = 0.2;
-const cXcountry = canvasEarthSize * 0.4;
-const cYcountry = canvasEarthSize * 0.4;
 
 // Start the animation
 animate();
@@ -180,12 +191,19 @@ function drawPopulation(cX, cY, billion, opts) {
 }
 function drawFixed() {
     if (!canvasEarth) return; // dummy for ts
+
     // Earth now
+    const cXearth = canvasEarthSize * 0.5;
+    const cYearth = canvasEarthSize * 0.5;
     drawPopulation(cXearth, cYearth, startEarth, { width: 1, color: "goldenrod", fill: "goldenrod" })
+
     // Country now
+    const cXcountry = canvasEarthSize * 0.4;
+    const cYcountry = canvasEarthSize * 0.4;
     drawPopulation(cXcountry, cYcountry, startCountry, { width: 1, color: "red", fill: "red" })
+
     // Mean selection
-    drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" });
+    // drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" });
     // Max
 }
 
