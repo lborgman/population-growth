@@ -2,69 +2,71 @@
 
 console.log("Here is world.js");
 
-const fixedCircles = [
-    {
-        x: 100, y: 100,
-        // vx: 3.5, vy: -2.8,
-        radius: 25,
-        // fill: '#ff0088',
-        stroke: { color: "white", width: 5 }
-    },
-    /*
-    {
-        x: 40, y: 30,
-        vx: -2.1, vy: 4.2,
-        radius: 18,
-        fill: '#00ccff'
-    },
-    {
-        x: 60, y: 20,
-        vx: 1.8, vy: -3.5,
-        radius: 30,
-        fill: '#ffcc00'
-    },
-    */
-];
 
-const defaultLineWidth = 10;
+const idCanvasEarth = 'canvas-earth';
+const canvasEarth = /** @type {HTMLCanvasElement|null} */ (document.getElementById(idCanvasEarth));
+if (!canvasEarth) { debugger; throw Error(`Did not find "${idCanvasEarth}"`); }
+const bcrEarth = canvasEarth.getBoundingClientRect();
+canvasEarth.width = bcrEarth.width;
+canvasEarth.height = bcrEarth.height;
+const canvasEarthSize = canvasEarth.width;
+const ctxEarth = canvasEarth.getContext('2d');
+if (ctxEarth == null) { debugger; throw Error(`ctxEarth is null`); }
 
-const idCanvas = 'circles-canvas';
-const canvas =
-    /** @type {HTMLCanvasElement|null} */
-    (document.getElementById(idCanvas));
-if (!canvas) {
-    debugger;
-    throw Error(`Did not find "${idCanvas}"`);
+const idCanvasStat = 'canvas-stat';
+const canvasStat = /** @type {HTMLCanvasElement|null} */ (document.getElementById(idCanvasStat));
+if (!canvasStat) { debugger; throw Error(`Did not find "${idCanvasStat}"`); }
+const bcrStat = canvasStat.getBoundingClientRect();
+canvasStat.width = bcrStat.width;
+canvasStat.height = bcrStat.height;
+const canvasStatSize = canvasStat.width;
+const ctxStat = canvasStat.getContext('2d');
+if (ctxStat == null) { debugger; throw Error(`ctxStat is null`); }
+
+
+drawStat();
+// throw Error("stop");
+
+function drawStat() {
+    // debugger;
+    if (ctxStat == null) throw Error("ctxStat is null"); // for ts
+    console.log("Canvas size:", canvasStat.width, canvasStat.height);
+    console.log("canvasStatSize =", canvasStatSize);
+    const w = canvasStatSize;
+    const w3 = w / 3;
+    ctxStat.lineWidth = 0.5;
+    ctxStat.strokeStyle = "#0008";
+    [1, 2].forEach(i => {
+        // vertical
+        ctxStat.beginPath();
+        ctxStat.moveTo(w3 * i, 0);
+        ctxStat.lineTo(w3 * i, w);
+        ctxStat.stroke();
+        // horizontal
+        ctxStat.beginPath();
+        ctxStat.moveTo(0, w3 * i);
+        ctxStat.lineTo(w, w3 * i);
+        ctxStat.stroke();
+
+    });
 }
-// const body = document.querySelector("body");
-// const bBcr = body.getBoundingClientRect();
-// console.log({ body, bBcr });
-const cBcr = canvas.getBoundingClientRect();
-console.log({ cBcr });
-// debugger;
-canvas.width = cBcr.width;
-canvas.height = cBcr.height;
-const canvasW = canvas.width;
+
+
 
 /** @param {number} popBillion @returns {number} */
 function population2radius(popBillion) {
-    return popBillion * canvasW * 0.3 / 8;
+    return popBillion * canvasEarthSize * 0.3 / 8;
 }
 
 
-const ctx = canvas.getContext('2d');
-if (ctx == null) {
-    debugger;
-    throw Error(`ctx is null`);
-}
 
 const startEarth = 8;
-const cXearth = canvasW * 0.5;
-const cYearth = canvasW * 0.5;
+const cXearth = canvasEarthSize * 0.5;
+const cYearth = canvasEarthSize * 0.5;
 
 const startCountry = 0.2;
-const cXcountry = canvasW * 0.4;
-const cYcountry = canvasW * 0.4;
+const cXcountry = canvasEarthSize * 0.4;
+const cYcountry = canvasEarthSize * 0.4;
 
 // Start the animation
 animate();
@@ -112,16 +114,16 @@ function drawCircle(cX, cY, radius, opts = {}) {
         throw Error(msg);
     }
 
-    if (!ctx) return; // dummy for ts
-    ctx.beginPath();
-    ctx.arc(cX, cY, radius, 0, Math.PI * 2);
+    if (!ctxEarth) return; // dummy for ts
+    ctxEarth.beginPath();
+    ctxEarth.arc(cX, cY, radius, 0, Math.PI * 2);
     if (fill) {
-        ctx.fillStyle = fill;
-        ctx.fill();
+        ctxEarth.fillStyle = fill;
+        ctxEarth.fill();
     }
-    ctx.lineWidth = width;
-    if (color) { ctx.strokeStyle = color; }
-    ctx.stroke();
+    ctxEarth.lineWidth = width;
+    if (color) { ctxEarth.strokeStyle = color; }
+    ctxEarth.stroke();
 }
 /**
  * @param {number} cX
@@ -130,58 +132,35 @@ function drawCircle(cX, cY, radius, opts = {}) {
  * @param {Object} opts
  * @param {number} opts.width
  * @param {string} opts.color
- * @param {string} opts.fill
+ * @param {string} [opts.fill]
  */
 
 function drawPopulation(cX, cY, billion, opts) {
     drawCircle(cX, cY, population2radius(billion), opts);
 }
 function drawFixed() {
-    if (!canvas) return; // dummy for ts
-    // Start
+    if (!canvasEarth) return; // dummy for ts
+    // Earth now
     drawPopulation(cXearth, cYearth, startEarth, { width: 1, color: "goldenrod", fill: "goldenrod" })
-    // Country
+    // Country now
     drawPopulation(cXcountry, cYcountry, startCountry, { width: 1, color: "red", fill: "red" })
     // Mean selection
-    drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" , fill: undefined});
+    drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" });
     // Max
 }
+
+let gridSizePopulation = 1;
+function drawGrid() {
+    const gridSize = population2radius(gridSizePopulation);
+    canvasEarth
+
+
+}
+
 function animate() {
-    if (!ctx) return; // dummy for ts
-    if (!canvas) return; // dummy for ts
-
-    // 1. Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!ctxEarth) return; // dummy for ts
+    ctxEarth.clearRect(0, 0, canvasEarthSize, canvasEarthSize);
     drawFixed();
-    return;
-
-    // 2. Update and draw each circle
-    for (let i = 0; i < fixedCircles.length; i++) {
-        const c = fixedCircles[i];
-
-        // Draw fixed circles
-        const stroke = c.stroke;
-        drawCircle(c.x, c.y, c.radius, 10, stroke.color, undefined);
-
-        /*
-        ctx.beginPath();
-        ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
-        const fill = c.fill;
-        if (fill) {
-            ctx.fillStyle = c.fill;
-            ctx.fill();
-        }
-        // const stroke = c.stroke;
-        if (stroke) {
-            const { color, width } = stroke;
-            const w = width != undefined ? width : defaultLineWidth;
-            console.log({ color, width, w });
-            ctx.strokeStyle = color;
-            ctx.lineWidth = w;
-            ctx.stroke();
-        }
-        */
-    }
 
     // 3. Schedule the next frame
     // requestAnimationFrame(animate);
