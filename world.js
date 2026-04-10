@@ -105,10 +105,26 @@ drawStat(startEarth);
 drawXY();
 
 function drawXY() {
-    console.log({modXY});
+    console.log({ modXY });
     const canvasTime = document.getElementById("canvas-time")
-    modXY.drawXYDiagram(canvasTime, [{x:1, y:0}, {x:2, y:0.5}]);
+    // modXY.drawXYDiagram(canvasTime, [{x:1, y:0}, {x:2, y:0.5}]);
     // debugger;
+    const firstXY = getXY(2025, 2065);
+    modXY.drawXYDiagram(canvasTime, firstXY);
+}
+function getXY(yrStart, yrEnd) {
+    const yearGeneration = 20;
+    const countryFactorGeneration = 3;
+    const countryFactorYear = Math.pow(3, 1 / 20);
+    console.log({ countryFactorYear });
+    const countryYX = [];
+    for (let x = yrStart; x <= yrEnd; x++) {
+        const y = startCountry * Math.pow(countryFactorYear, x - yrStart);
+        countryYX.push({ x, y });
+        console.log("y", y);
+    }
+    console.log({ countryYX });
+    return countryYX;
 }
 
 /**

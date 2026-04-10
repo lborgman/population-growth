@@ -103,11 +103,11 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         ctx.fillStyle = labelColor;
         ctx.font = "12px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(xVal.toFixed(1), cx, H - padding + 18);
+        ctx.fillText(xVal.toFixed(0), cx, H - padding + 18);
 
         // Y-axis labels
         ctx.textAlign = "right";
-        ctx.fillText(yVal.toFixed(1), padding - 8, cy + 4);
+        ctx.fillText(yVal.toFixed(0), padding - 8, cy + 4);
     }
 
     // Draw axes
