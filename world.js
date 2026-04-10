@@ -76,14 +76,14 @@ function buildMain() {
     ]);
     eltControls.style = `
         padding: 8px;
-        outline: 2px dotted blue;
+        outline: 1px dashed blue;
     `;
     const eltStat = mkElt("div", undefined, [
         canvasStat,
         eltControls
     ]);
     eltStat.style = `
-        outLine: 8px dotted blue;
+        outLine: 4px dotted red;
         display: flex;
         gap: 10px;
     `;
@@ -165,22 +165,6 @@ function population2radius(popBillion) {
 // Start the animation
 animate();
 
-/*
-{
-    // debugger;
-    const red = { color: "red" };
-    const blue = { color: "skyblue", start: -30 };
-    const yellow = { color: "yellow" };
-    const green = { color: "green" };
-    const white = { color: "white", align: "right", kerning: -5 };
-    addCircularText("default", 100, 100, 70, canvas, { ...red });
-    addCircularText("!inside", 100, 100, 70, canvas, { ...blue, textInside: false });
-    addCircularText("!inward", 100, 100, 70, canvas, { ...yellow, inwardFacing: false });
-    addCircularText("!inward,!inside", 100, 100, 70, canvas, { ...green, inwardFacing: false, textInside: false });
-    addCircularText("1.6rem", 100, 100, 70, canvas, { ...white, fSize: "1.6rem" });
-    // addCircularText("24px", 100, 100, 70, canvas, { ...white, fSize: "24px" });
-}
-*/
 
 
 /**

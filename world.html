@@ -18,27 +18,84 @@
     <style>
         :root {
             font-size: 16px;
+            font-family: Arial, sans-serif;
         }
 
 
         #canvas-stat {
-            width: 80px;
-            aspect-ratio: 1 / 1;
-            outline: 1px dashed red;
             background-color: goldenrod;
         }
 
         #canvas-earth {
-            NOwidth: 300px;
-            NOaspect-ratio: 1 / 1;
-            outline: 4px dashed gold;
             background-color: black;
+        }
+
+        #assume {
+            background-color: lightskyblue;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        #question {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        #how {
+            background-color: color-mix(lightskyblue 50%,
+                    transparent 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        input[type=range] {
+            filter: grayscale(0.5)
         }
     </style>
 </head>
 
 <body>
     <h1>World population growth</h1>
+
+    <div id="assume">
+        <div>
+            Assume that:
+        </div>
+        <ul style="margin: 0px;">
+            <li>
+                Population on our planet as a whole is declining.
+            </li>
+            <li>
+                Population in one single country grows very fast.
+            </li>
+        </ul>
+    </div>
+    <p>
+        <span id="question">
+            What does that mean for future number of humans?
+        </span>
+        It may surprize you that it can lead to that the human population on our planet grows very fast.
+    </p>
+    <details id="how">
+        <summary>How can that happen?</summary>
+        <div>
+            <p>
+                It is all in the math.
+                Growth is exponential.
+                Think of doubling something.
+                Compare that with halving.
+                Put them beside each other.
+                In absolute sizes
+                doubling will grow very quickly,
+                but halving not change that much.
+            </p>
+            <p>
+                We can use that simple fact to roughly estimate population growth under our assumption.
+                I hope this page can help you think about it.
+            </p>
+        </div>
+    </details>
     <main></main>
 
     <script type="module">
