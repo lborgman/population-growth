@@ -102,6 +102,14 @@ function buildMain() {
 
 drawStat(startEarth);
 // throw Error("stop");
+drawXY();
+
+function drawXY() {
+    console.log({modXY});
+    const canvasTime = document.getElementById("canvas-time")
+    modXY.drawXYDiagram(canvasTime, [{x:1, y:0}, {x:2, y:0.5}]);
+    // debugger;
+}
 
 /**
  * 

@@ -36,7 +36,30 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
 
     if (!canvas) throw Error(`canvas is "${canvas}"`);
     if (!(canvas instanceof HTMLCanvasElement)) throw Error("canvas is not HTMLCanvasElement");
+
     const ctx = canvas.getContext("2d");
+    if (!(ctx instanceof CanvasRenderingContext2D)) throw Error("ctx is not CanvasRenderingContext2D");
+
+    // Check data format
+    dataXY.forEach(p => {
+        const {x, y, ...rest} = p;
+        const restKeys = Object.keys(rest);
+        if (restKeys.length > 0) {
+            debugger;
+            throw Error("Bad dataXY");
+        }
+        const tofX = typeof x;
+        if (tofX != "number") {
+            debugger;
+            throw Error("Bad dataXY");
+        }
+        const tofY = typeof y;
+        if (tofY != "number") {
+            debugger;
+            throw Error("Bad dataXY");
+        }
+    });
+
     const W = canvas.width;
     const H = canvas.height;
     // Clear
