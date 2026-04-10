@@ -28,13 +28,14 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         ...rest
     } = opts;
     if (Object.keys(rest).length > 0) {
-        const msg = `Unknown options: ${keys.join(", ")}`;
+        const msg = `Unknown options: ${Object.keys(rest).join(", ")}`;
         console.error(msg);
         debugger;
         throw Error(msg);
     }
 
-
+    if (!canvas) throw Error(`canvas is "${canvas}"`);
+    if (!(canvas instanceof HTMLCanvasElement)) throw Error("canvas is not HTMLCanvasElement");
     const ctx = canvas.getContext("2d");
     const W = canvas.width;
     const H = canvas.height;

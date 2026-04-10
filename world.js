@@ -1,14 +1,19 @@
 // @ts-check
-
-console.log("Here is world.js");
+const WORLD_VER = "0.0.1";
+console.log(`here is world.js, module, ${WORLD_VER}`);
+if (document.currentScript) { throw "world.js is not loaded as module"; }
 
 // @ts-ignore
 const mkElt = window["mkElt"];
 console.log({ mkElt });
 
-const startEarth = 8;
+const modXY = await import("canvas-xy");
+console.log({ modXY });
 
-const startCountry = 0.2;
+
+/** @typedef {number} NumHumans */
+/** @type {NumHumans} */ const startEarth = 8;
+/** @type {NumHumans} */ const startCountry = 0.2;
 
 
 const {
@@ -33,21 +38,34 @@ function buildMain() {
     canvasStat.style.width = `${statSize}px`;
     canvasStat.style.height = `${statSize}px`;
     const ctxStat = canvasStat.getContext('2d');
+    console.log({ ctxStat });
 
-
-    const inpPopSize = mkElt("input", { type: "range", name: "pop-size", min: startCountry, max: 1, step: 0.1 });
-    const valPosSize = mkElt("span", undefined, "wait...");
-    const lblPopSize = mkElt("label", undefined, [
-        valPosSize,
-        " billion"
-    ]);
-    inpPopSize.addEventListener("change", evt => {
-        valPosSize.textContent = inpPopSize.value;
+    const startPopSize = 1; // FIX-ME:
+    const inpStatPopSize = mkElt("input", {
+        type: "range", name: "pop-size",
+        min: startCountry, max: startEarth, value: startPopSize, step: 0.1
     });
+    inpStatPopSize.value = startPopSize; // Needed. Looks like a bug in the HTML spec.
+
+    // const valStatPopSize = mkElt("span", undefined, startPopSize.toFixed(1));
+    const valStatPopSize = mkElt("span");
+    const lblStatPopSize = mkElt("label", undefined, [
+        valStatPopSize,
+        " billion humans"
+    ]);
+    inpStatPopSize.addEventListener("change", () => {
+        updateStatValues();
+    });
+    setTimeout(() => { updateStatValues(); }); // FIX-ME:
+    function updateStatValues() {
+        const billions =/** @type {NumHumans} */ parseFloat(inpStatPopSize.value);
+        drawStat(billions);
+        valStatPopSize.textContent = billions.toFixed(1);
+    }
     const eltPopSize = mkElt("span", undefined, [
-        "Statistical unit",
-        inpPopSize,
-        lblPopSize
+        "Statistical grid",
+        inpStatPopSize,
+        lblStatPopSize
     ]);
     eltPopSize.style = `
         display: flex;
@@ -82,22 +100,34 @@ function buildMain() {
     }
 }
 
-drawStat();
+drawStat(startEarth);
 // throw Error("stop");
 
-function drawStat() {
+/**
+ * 
+ * @param {NumHumans} statBillions 
+ */
+export function drawStat(statBillions) {
     // debugger;
+    console.log({ ctxStat });
     if (ctxStat == null) throw Error("ctxStat is null"); // for ts
-    console.log("Canvas size:", canvasStat.width, canvasStat.height);
-    console.log("canvasStatSize =", canvasStatSize);
+    ctxStat.clearRect(0, 0, canvasStatSize, canvasStatSize);
+
+
+    // console.log("Canvas size:", canvasStat.width, canvasStat.height);
+    // console.log("canvasStatSize =", canvasStatSize);
     const w = canvasStatSize;
     const w3 = w / 3;
-    drawCountry();
+
+    drawCountryInStat();
     drawGrid();
-    function drawCountry() {
-        const radius = 20;
+    function drawCountryInStat() {
+        // FIX-ME: area
+        // FIX-ME: maybe square instead of circle??
+        // FIX-ME: Did I get the math correct now? (No! I do not have time to fix it at the moment...)
+        const radius = w3 * Math.sqrt(startCountry / statBillions);
         ctxStat.beginPath();
-        ctxStat.arc(w/2, w/2, radius, 0, Math.PI * 2);
+        ctxStat.arc(w / 2, w / 2, radius, 0, Math.PI * 2);
         ctxStat.fillStyle = "red";
         ctxStat.fill();
         ctxStat.lineWidth = 1;
