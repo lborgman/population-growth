@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World population growth</title>
     <script src="./init-error-new.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "world": "./world.js",
+                "circle-text": "./js/mod/circle-text.js",
+                "canvas-xy": "./js/mod/canvas-xy.js"
+            }
+        }
+    </script>
     <style>
         :root {
             font-size: 16px;
@@ -30,11 +39,10 @@
 
 <body>
     <h1>World population growth</h1>
-    <!-- <canvas id="canvas-stat"></canvas> -->
-    <!-- <canvas id="canvas-earth"></canvas> -->
     <main></main>
 
-    <script type="module" src="./world.js">
+    <script type="module">
+        import("world");
     </script>
 </body>
 

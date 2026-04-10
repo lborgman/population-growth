@@ -92,21 +92,34 @@ function drawStat() {
     console.log("canvasStatSize =", canvasStatSize);
     const w = canvasStatSize;
     const w3 = w / 3;
-    ctxStat.lineWidth = 0.5;
-    ctxStat.strokeStyle = "#0008";
-    [1, 2].forEach(i => {
-        // vertical
+    drawCountry();
+    drawGrid();
+    function drawCountry() {
+        const radius = 20;
         ctxStat.beginPath();
-        ctxStat.moveTo(w3 * i, 0);
-        ctxStat.lineTo(w3 * i, w);
+        ctxStat.arc(w/2, w/2, radius, 0, Math.PI * 2);
+        ctxStat.fillStyle = "red";
+        ctxStat.fill();
+        ctxStat.lineWidth = 1;
+        ctxStat.strokeStyle = "orange";
         ctxStat.stroke();
-        // horizontal
-        ctxStat.beginPath();
-        ctxStat.moveTo(0, w3 * i);
-        ctxStat.lineTo(w, w3 * i);
-        ctxStat.stroke();
-
-    });
+    }
+    function drawGrid() {
+        ctxStat.lineWidth = 0.5;
+        ctxStat.strokeStyle = "#0008";
+        [1, 2].forEach(i => {
+            // vertical
+            ctxStat.beginPath();
+            ctxStat.moveTo(w3 * i, 0);
+            ctxStat.lineTo(w3 * i, w);
+            ctxStat.stroke();
+            // horizontal
+            ctxStat.beginPath();
+            ctxStat.moveTo(0, w3 * i);
+            ctxStat.lineTo(w, w3 * i);
+            ctxStat.stroke();
+        });
+    }
 }
 
 
