@@ -49,8 +49,41 @@
             border-radius: 8px;
             margin-bottom: 20px;
         }
+
         input[type=range] {
             filter: grayscale(0.5)
+        }
+
+        #the-grid {
+            display: flex;
+        }
+
+        #grid-size {
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            NOoutline: 1px dashed blue;
+        }
+
+        #elt-stat {
+            NOoutLine: 4px dotted red;
+            display: flex;
+            gap: 10px;
+            width: fit-content;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: color-mix(gold 80%, transparent 80%);
+        }
+        #time {
+            background: yellow;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid gray;
+        }
+        #result {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -88,7 +121,7 @@
                 Put them beside each other.
                 In absolute sizes
                 doubling will grow very quickly,
-                but halving not change that much.
+                but halving does not change that much.
             </p>
             <p>
                 We can use that simple fact to roughly estimate population growth under our assumption.

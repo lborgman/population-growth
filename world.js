@@ -62,34 +62,34 @@ function buildMain() {
         drawStat(billions);
         valStatPopSize.textContent = billions.toFixed(1);
     }
-    const eltPopSize = mkElt("span", undefined, [
+    const eltGridSize = mkElt("span", undefined, [
         "Statistical grid",
         inpStatPopSize,
         lblStatPopSize
     ]);
-    eltPopSize.style = `
-        display: flex;
-        flex-direction: column;
-    `;
-    const eltControls = mkElt("span", undefined, [
-        eltPopSize
-    ]);
-    eltControls.style = `
-        padding: 8px;
-        outline: 1px dashed blue;
-    `;
-    const eltStat = mkElt("div", undefined, [
+    eltGridSize.id = "grid-size";
+    const eltStat = mkElt("p", undefined, [
         canvasStat,
-        eltControls
+        eltGridSize
     ]);
-    eltStat.style = `
-        outLine: 4px dotted red;
-        display: flex;
-        gap: 10px;
-    `;
+    eltStat.id = "elt-stat";
+
+    const canvasTime = mkElt("canvas");
+    canvasTime.id = "canvas-time";
+    const eltTime = mkElt("div", undefined, canvasTime);
+    eltTime.id = "time";
+    // eltTime.append("TIME diagram");
+
+    const eltResult = mkElt("div", undefined, [
+        mkElt("h4", undefined, "Result"),
+        eltTime,
+        canvasEarth
+    ]);
+    eltResult.id = "result";
+
     const eltMain = mkElt("main", undefined, [
         eltStat,
-        canvasEarth
+        eltResult
     ]);
 
     const body = document.body.querySelector("main");
