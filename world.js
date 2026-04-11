@@ -110,7 +110,10 @@ function drawXY() {
     // modXY.drawXYDiagram(canvasTime, [{x:1, y:0}, {x:2, y:0.5}]);
     // debugger;
     const firstXY = getXY(2025, 2065);
-    modXY.drawXYDiagram(canvasTime, firstXY);
+    const optsXY = {
+        dotRadius: -1,
+    }
+    modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
 }
 function getXY(yrStart, yrEnd) {
     const yearGeneration = 20;
@@ -121,7 +124,7 @@ function getXY(yrStart, yrEnd) {
     for (let x = yrStart; x <= yrEnd; x++) {
         const y = startCountry * Math.pow(countryFactorYear, x - yrStart);
         countryYX.push({ x, y });
-        console.log("y", y);
+        // console.log("y", y);
     }
     console.log({ countryYX });
     return countryYX;
@@ -147,7 +150,7 @@ export function drawStat(statBillions) {
     drawGrid();
     function drawCountryInStat() {
         // FIX-ME: area
-        // FIX-ME: maybe square instead of circle??
+        // FIX-ME: maybe square instead of circle?
         // FIX-ME: Did I get the math correct now? (No! I do not have time to fix it at the moment...)
         const radius = w3 * Math.sqrt(startCountry / statBillions);
         ctxStat.beginPath();
