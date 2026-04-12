@@ -5,12 +5,10 @@ if (document.currentScript) { throw "world.js is not loaded as module"; }
 
 // @ts-ignore
 const mkElt = window["mkElt"];
-console.log({ mkElt });
 
 const modXY = await import("canvas-xy");
-console.log({ modXY });
 
-    const canvasTimeId = "canvas-time";
+const canvasTimeId = "canvas-time";
 
 /** @typedef {number} NumHumans */
 // https://worldpopulationhistory.org/map/2050/mercator/1/0/25/
@@ -20,7 +18,7 @@ console.log({ modXY });
 /** @type {NumHumans} */ const startCountries = 0.25;
 /** @type {NumHumans} */ const startAfrica = 1.5;
 
-let yearGeneration = 20;
+let yearGeneration = 23;
 let countryFertility = 6; // Children per woman
 
 
@@ -46,7 +44,7 @@ function buildMain() {
     canvasStat.style.width = `${statSize}px`;
     canvasStat.style.height = `${statSize}px`;
     const ctxStat = canvasStat.getContext('2d');
-    console.log({ ctxStat });
+    // console.log({ ctxStat });
 
     const startPopSize = 1; // FIX-ME:
     const inpStatPopSize = mkElt("input", {
@@ -89,14 +87,71 @@ function buildMain() {
     // eltTime.append("TIME diagram");
 
     const eltResult = mkElt("div", undefined, [
-        mkElt("h4", undefined, "Result"),
+        mkElt("h2", undefined, "Result:"),
         eltTime,
         canvasEarth
     ]);
     eltResult.id = "result";
 
+    const rangeFertility = mkElt("input", {
+        type: "range",
+        min: 5, max: 7, value: countryFertility, step: 0.1
+    });
+    const spanFertility = mkElt("span", undefined, countryFertility.toFixed(1));
+    const lblFertility = mkElt("label", undefined, [
+        "Children per woman: ",
+        spanFertility,
+        rangeFertility,
+    ]);
+    lblFertility.style = `
+        display: flex;
+        gap: 10px;
+    `;
+
+
+    const rangeGeneration = mkElt("input", {
+        type: "range",
+        min: 20, max: 25, value: yearGeneration, step: 0.1
+    });
+    const spanGeneration = mkElt("span", undefined, yearGeneration.toFixed(1));
+    const lblGeneration = mkElt("label", undefined, [
+        "Year per generation: ",
+        spanGeneration,
+        rangeGeneration,
+    ]);
+    lblGeneration.style = `
+        display: flex;
+        gap: 10px;
+    `;
+
+    const eltAssuming = mkElt("div", undefined, [
+        lblFertility,
+        lblGeneration
+    ]);
+    eltAssuming.style = `
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    `;
+    const eltAssume = mkElt("p", undefined, [
+        mkElt("h2", undefined, "Assume:"),
+        // eltStat
+        eltAssuming
+    ]);
+    eltAssume.id = "assumptions";
+    eltAssume.addEventListener("change", () => {
+        yearGeneration = parseFloat(rangeGeneration.value);
+        spanGeneration.textContent = yearGeneration.toFixed(1);
+
+        countryFertility = parseFloat(rangeFertility.value);
+        spanFertility.textContent = countryFertility.toFixed(1);
+
+        console.log("eltAssume change", { countryFertility, yearGeneration });
+        drawXY();
+    });
+
     const eltMain = mkElt("main", undefined, [
-        eltStat,
+        eltAssume,
         eltResult
     ]);
 
@@ -113,7 +168,7 @@ drawStat(startEarth);
 drawXY();
 
 function drawXY() {
-    console.log({ modXY });
+    // console.log({ modXY });
     const canvasTime = document.getElementById(canvasTimeId);
     if (!canvasTime) {
         debugger;
@@ -126,6 +181,7 @@ function drawXY() {
     const firstXY = getXY(2025, 2065);
     const optsXY = {
         dotRadius: -1,
+        maxY: 2.1
     }
     const objDiagram = modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
 
@@ -163,7 +219,7 @@ function getXY(yrStart, yrEnd) {
  */
 export function drawStat(statBillions) {
     // debugger;
-    console.log({ ctxStat });
+    // console.log({ ctxStat });
     if (ctxStat == null) throw Error("ctxStat is null"); // for ts
     ctxStat.clearRect(0, 0, canvasStatSize, canvasStatSize);
 

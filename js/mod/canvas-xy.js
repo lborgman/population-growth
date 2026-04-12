@@ -57,6 +57,7 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         labelColor = defaultLabelColor,
 
         minY = 0,
+        maxY,
 
         padding = 30, // FIX-ME:
         ...rest
@@ -104,12 +105,12 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     const ys = dataXY.map(p => p.y);
     const minX = opts.minX ?? Math.min(...xs);
     const maxX = opts.maxX ?? Math.max(...xs);
-    // const minY = opts.minY ?? Math.min(...ys);
-    const maxY = opts.maxY ?? Math.max(...ys);
+    // const maxY = opts.maxY ?? Math.max(...ys);
+    const ourMaxY = maxY ?? Math.max(...ys);
 
     // Map data coords → canvas pixels
     const toCanvasX = x => padding + ((x - minX) / (maxX - minX)) * (W - padding * 2);
-    const toCanvasY = y => H - padding - ((y - minY) / (maxY - minY)) * (H - padding * 2);
+    const toCanvasY = y => H - padding - ((y - minY) / (ourMaxY - minY)) * (H - padding * 2);
 
     drawAxisAndGrid();
     drawData();
@@ -123,8 +124,9 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     function drawAxisAndGrid() {
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = gridLineWidth;
-        const yMarkers = calculateNiceMarkers(maxY, gridCount - 1);
+        const yMarkers = calculateNiceMarkers(maxY, gridCount - 0);
         console.log({ yMarkers });
+
         // yMarkers.forEach(yVal => {
         for (let i = 0, len = yMarkers.length; i < len; i++) {
             const yVal = yMarkers[i];
@@ -146,9 +148,7 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         ctx.lineWidth = gridLineWidth;
         for (let i = 0; i <= gridCount; i++) {
             const xVal = minX + (i / gridCount) * (maxX - minX);
-            // const yVal = minY + (i / gridCount) * (maxY - minY);
             const cx = toCanvasX(xVal);
-            // const cy = toCanvasY(yVal);
 
             // Vertical grid line
             ctx.beginPath();
