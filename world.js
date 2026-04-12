@@ -12,6 +12,7 @@ const canvasTimeId = "canvas-time";
 
 /** @typedef {number} NumHumans */
 // https://worldpopulationhistory.org/map/2050/mercator/1/0/25/
+// https://worldpopulationhistory.org/
 // https://worldpopulationhistory.org/source-credits/
 // https://guardian.ng/nigerian/how-many-kids-does-the-average-nigerian-have/
 /** @type {NumHumans} */ const startEarth = 8;
@@ -95,7 +96,7 @@ function buildMain() {
 
     const rangeFertility = mkElt("input", {
         type: "range",
-        min: 5, max: 7, value: countryFertility, step: 0.1
+        min: 2, max: 7, value: countryFertility, step: 0.1
     });
     const spanFertility = mkElt("span", undefined, countryFertility.toFixed(1));
     const lblFertility = mkElt("label", undefined, [
@@ -136,6 +137,14 @@ function buildMain() {
     const eltAssume = mkElt("p", undefined, [
         mkElt("h2", undefined, "Assume:"),
         // eltStat
+        mkElt("p", undefined, [
+            `
+            Example: Africa.
+            Population 1.5 billion.
+            There is a fast growing part of at least 250 million.
+            Let us look at that part:
+            `
+        ]),
         eltAssuming
     ]);
     eltAssume.id = "assumptions";
