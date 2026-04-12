@@ -10,10 +10,18 @@ console.log({ mkElt });
 const modXY = await import("canvas-xy");
 console.log({ modXY });
 
+    const canvasTimeId = "canvas-time";
 
 /** @typedef {number} NumHumans */
+// https://worldpopulationhistory.org/map/2050/mercator/1/0/25/
+// https://worldpopulationhistory.org/source-credits/
+// https://guardian.ng/nigerian/how-many-kids-does-the-average-nigerian-have/
 /** @type {NumHumans} */ const startEarth = 8;
-/** @type {NumHumans} */ const startCountry = 0.2;
+/** @type {NumHumans} */ const startCountries = 0.25;
+/** @type {NumHumans} */ const startAfrica = 1.5;
+
+let yearGeneration = 20;
+let countryFertility = 6; // Children per woman
 
 
 const {
@@ -43,7 +51,7 @@ function buildMain() {
     const startPopSize = 1; // FIX-ME:
     const inpStatPopSize = mkElt("input", {
         type: "range", name: "pop-size",
-        min: startCountry, max: startEarth, value: startPopSize, step: 0.1
+        min: startCountries, max: startAfrica, value: startAfrica, step: 0.1
     });
     inpStatPopSize.value = startPopSize; // Needed. Looks like a bug in the HTML spec.
 
@@ -75,7 +83,7 @@ function buildMain() {
     eltStat.id = "elt-stat";
 
     const canvasTime = mkElt("canvas");
-    canvasTime.id = "canvas-time";
+    canvasTime.id = canvasTimeId;
     const eltTime = mkElt("div", undefined, canvasTime);
     eltTime.id = "time";
     // eltTime.append("TIME diagram");
@@ -106,23 +114,42 @@ drawXY();
 
 function drawXY() {
     console.log({ modXY });
-    const canvasTime = document.getElementById("canvas-time")
-    // modXY.drawXYDiagram(canvasTime, [{x:1, y:0}, {x:2, y:0.5}]);
-    // debugger;
+    const canvasTime = document.getElementById(canvasTimeId);
+    if (!canvasTime) {
+        debugger;
+        throw Error(`Could not find "${canvasTimeId}"`);
+    }
+    const bcr = canvasTime.getBoundingClientRect();
+    canvasTime.width = bcr.width;
+    canvasTime.height = bcr.height;
+
     const firstXY = getXY(2025, 2065);
     const optsXY = {
         dotRadius: -1,
     }
-    modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
+    const objDiagram = modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
+
+    // Draw earch current line
+    // @ts-ignore
+    const ctx = canvasTime.getContext("2d");
+    const y = objDiagram.toCanvasY(startAfrica);
+    const x1 = objDiagram.toCanvasX(objDiagram.minX);
+    const x2 = objDiagram.toCanvasX(objDiagram.maxX);
+    ctx.strokeStyle = "#311";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    ctx.lineTo(x2, y);
+    ctx.stroke();
 }
 function getXY(yrStart, yrEnd) {
-    const yearGeneration = 20;
-    const countryFactorGeneration = 3;
-    const countryFactorYear = Math.pow(3, 1 / 20);
+    // const countryFactorYear = Math.pow(2.75, 1 / 20);
+    // const countryFactorYear = Math.pow(2.75, 1 / yearGeneration);
+    const countryFactorYear = Math.pow(countryFertility / 2, 1 / yearGeneration);
     console.log({ countryFactorYear });
     const countryYX = [];
     for (let x = yrStart; x <= yrEnd; x++) {
-        const y = startCountry * Math.pow(countryFactorYear, x - yrStart);
+        const y = startCountries * Math.pow(countryFactorYear, x - yrStart);
         countryYX.push({ x, y });
         // console.log("y", y);
     }
@@ -152,7 +179,7 @@ export function drawStat(statBillions) {
         // FIX-ME: area
         // FIX-ME: maybe square instead of circle?
         // FIX-ME: Did I get the math correct now? (No! I do not have time to fix it at the moment...)
-        const radius = w3 * Math.sqrt(startCountry / statBillions);
+        const radius = w3 * Math.sqrt(startCountries / statBillions);
         ctxStat.beginPath();
         ctxStat.arc(w / 2, w / 2, radius, 0, Math.PI * 2);
         ctxStat.fillStyle = "red";
@@ -254,7 +281,7 @@ function drawFixed() {
     // Country now
     const cXcountry = canvasEarthSize * 0.4;
     const cYcountry = canvasEarthSize * 0.4;
-    drawPopulation(cXcountry, cYcountry, startCountry, { width: 1, color: "red", fill: "red" })
+    drawPopulation(cXcountry, cYcountry, startCountries, { width: 1, color: "red", fill: "red" })
 
     // Mean selection
     // drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" });
