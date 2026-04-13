@@ -16,7 +16,7 @@ An interactive view of a very simplified fictional population growth scenario.
 The scenario has one country with a very high fertility rate. The rest of the population is stable. What does this lead to?
 
 <figure>
-  <img src="./img/earth-hands.png" alt="Trulli" style="width:50%; filter:grayscale(0.4) blur(5px);">
+  <img src="./img/earth-hands.png" alt="Trulli" style="width:50%; filter:grayscale(0.4) blur(4px);">
   <figcaption style="color:gray; font-size:12px;">Our earth, our dimmed view
   </figcaption>
 </figure>
