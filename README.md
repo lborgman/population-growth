@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 # Population Growth
 
 <div style="display:flex; gap:10px; margin-left:20px;">
   <a title="- Click to start app"
-  ref="https://lborgman.github.io/population-growth/world.html">
+  href="https://lborgman.github.io/population-growth/world.html">
      <img src="./img/favicon.svg" style="width: 60px">
   </a>
   <span
