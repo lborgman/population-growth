@@ -194,7 +194,7 @@ function drawXY() {
     }
     const objDiagram = modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
 
-    // Draw earch current line
+    // Draw population current line
     // @ts-ignore
     const ctx = canvasTime.getContext("2d");
     const y = objDiagram.toCanvasY(startAfrica);

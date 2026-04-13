@@ -4,10 +4,11 @@ console.log(`here is canvas-xy.js, module, ${CANVAS_XY_VER}`);
 if (document.currentScript) { throw "canvas-xy.js is not loaded as module"; }
 
 
+/** @typedef {any[]} DataXY */ // FIX-ME:
 
 /**
  * @param {HTMLCanvasElement} canvas 
- * @param {any} dataXY  -- FIX-ME:
+ * @param {DataXY} dataXY
  *
  * @param {Object} [opts]
  * 
@@ -113,12 +114,39 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     const toCanvasY = y => H - padding - ((y - minY) / (ourMaxY - minY)) * (H - padding * 2);
 
     drawAxisAndGrid();
-    drawData();
+    drawDataXY(dataXY, ctx,
+        {
+            dataLineWidth,
+            dataLineColor,
+            dotRadius,
+            dotColor,
+            toCanvasX,
+            toCanvasY,
+        }
+    );
+    const dataFirstYears = dataXY.filter(p => {
+        const year = parseFloat(p.x);
+        if (typeof year != "number") throw Error("not a number");
+        return year < minX + 20;
+    });
+    console.log(dataXY.length, dataFirstYears.length);
+    // console.log({ dataFirstYears });
+    // debugger;
+    drawDataXY(dataFirstYears, ctx, {
+        dataLineWidth: 30,
+        dataLineColor: "#aa06",
+        dotRadius,
+        dotColor,
+        toCanvasX,
+        toCanvasY,
+    });
 
     return {
         toCanvasX, toCanvasY,
         minX, maxX,
         minY, maxY,
+        dataLineWidth,
+        dotRadius,
     }
 
     function drawAxisAndGrid() {
@@ -189,28 +217,62 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     }
 
 
-    function drawData() {
-        // Data lines
-        if (dataLineWidth > 0 && dataXY.length > 1) {
-            // ctx.strokeStyle = dotColor;
-            ctx.strokeStyle = dataLineColor;
-            ctx.lineWidth = dataLineWidth;
-            ctx.beginPath();
-            ctx.moveTo(toCanvasX(dataXY[0].x), toCanvasY(dataXY[0].y));
-            for (let i = 1; i < dataXY.length; i++) {
-                ctx.lineTo(toCanvasX(dataXY[i].x), toCanvasY(dataXY[i].y));
-            }
-            ctx.stroke();
-        }
+}
 
-        // Data dots
-        ctx.fillStyle = dotColor;
-        if (dotRadius > 0) {
-            for (const point of dataXY) {
-                ctx.beginPath();
-                ctx.arc(toCanvasX(point.x), toCanvasY(point.y), dotRadius, 0, Math.PI * 2);
-                ctx.fill();
-            }
+/**
+ * @param {DataXY} dataXY
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Object} [optsDrawXY]
+ * @param {number} [optsDrawXY.dataLineWidth]
+ * @param {string} [optsDrawXY.dataLineColor]
+ * @param {number} [optsDrawXY.dotRadius]
+ * @param {string} [optsDrawXY.dotColor]
+ * @param {function} [optsDrawXY.toCanvasX]
+ * @param {function} [optsDrawXY.toCanvasY]
+ */
+export function drawDataXY(dataXY, ctx, optsDrawXY = {}) {
+    const {
+        dataLineWidth,
+        dataLineColor,
+        dotRadius,
+        dotColor,
+        toCanvasX,
+        toCanvasY,
+        ...rest
+    } = optsDrawXY;
+    if (Object.keys(rest).length > 0) {
+        const msg = `Unknown options: ${Object.keys(rest).join(", ")}`;
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+    if (typeof dataLineWidth == "undefined") throw Error("dataLineWidth is required");
+    if (typeof dataLineColor == "undefined") throw Error("dataLineColor is required");
+    if (typeof dotRadius == "undefined") throw Error("dotRadius is required");
+    if (typeof dotColor == "undefined") throw Error("dotColor is required");
+    if (typeof toCanvasX == "undefined") throw Error("toCanvasX is required");
+    if (typeof toCanvasY == "undefined") throw Error("toCanvasY is required");
+
+    // Data lines
+    if (dataLineWidth > 0 && dataXY.length > 1) {
+        // ctx.strokeStyle = dotColor;
+        ctx.strokeStyle = dataLineColor;
+        ctx.lineWidth = dataLineWidth;
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(dataXY[0].x), toCanvasY(dataXY[0].y));
+        for (let i = 1; i < dataXY.length; i++) {
+            ctx.lineTo(toCanvasX(dataXY[i].x), toCanvasY(dataXY[i].y));
+        }
+        ctx.stroke();
+    }
+
+    // Data dots
+    ctx.fillStyle = dotColor;
+    if (dotRadius > 0) {
+        for (const point of dataXY) {
+            ctx.beginPath();
+            ctx.arc(toCanvasX(point.x), toCanvasY(point.y), dotRadius, 0, Math.PI * 2);
+            ctx.fill();
         }
     }
 }
