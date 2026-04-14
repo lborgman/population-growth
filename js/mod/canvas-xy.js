@@ -124,6 +124,8 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
             toCanvasY,
         }
     );
+
+    /*
     const dataFirstYears = dataXY.filter(p => {
         const year = parseFloat(p.x);
         if (typeof year != "number") throw Error("not a number");
@@ -140,6 +142,7 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         toCanvasX,
         toCanvasY,
     });
+    */
 
     return {
         toCanvasX, toCanvasY,

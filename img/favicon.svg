@@ -35,9 +35,11 @@
         <path transform="matrix(.56111 0 0 .63107 93.176 265.56)" d="m255 557.86c0 28.443-40.294 51.5-90 51.5s-90-23.057-90-51.5 40.294-51.5 90-51.5 90 23.057 90 51.5z" fill="url(#d)"/>
         -->
     </g>
-    <rect x="30" y="75" width="100" height="10" rx="5"
+    <g transform="translate(0 20)">
+    <rect x="30" y="75" width="100" height="15" rx="5"
     fill="#fff" stroke="#666" stroke-width="2" />
-    <rect x="30" y="75" width="40" height="10" rx="5"
+    <rect x="30" y="75" width="40" height="15" rx="5"
     fill="blue" stroke="blue" stroke-width="2" />
-    <circle cx="70" cy="79" r="11" fill="blue" />
+    <circle cx="70" cy="82" r="14" fill="blue" />
+    </g>
 </svg>

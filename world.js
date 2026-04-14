@@ -16,7 +16,8 @@ const canvasTimeId = "canvas-time";
 // https://worldpopulationhistory.org/source-credits/
 // https://guardian.ng/nigerian/how-many-kids-does-the-average-nigerian-have/
 /** @type {NumHumans} */ const startEarth = 8;
-/** @type {NumHumans} */ const startCountries = 0.25;
+/** @type {NumHumans} */ const startPartGrowing = 0.25;
+/** @type {string} */ const colorPartGrowing = "#900";
 /** @type {NumHumans} */ const startAfrica = 1.5;
 
 let yearGeneration = 23;
@@ -50,7 +51,7 @@ function buildMain() {
     const startPopSize = 1; // FIX-ME:
     const inpStatPopSize = mkElt("input", {
         type: "range", name: "pop-size",
-        min: startCountries, max: startAfrica, value: startAfrica, step: 0.1
+        min: startPartGrowing, max: startAfrica, value: startAfrica, step: 0.1
     });
     inpStatPopSize.value = startPopSize; // Needed. Looks like a bug in the HTML spec.
 
@@ -141,9 +142,11 @@ function buildMain() {
             `
             Example: Africa.
             Population 1.5 billion.
-            There is a fast growing part of at least 250 million.
-            Let us look at that part:
-            `
+            Africa has a fast growing part of at least 250 million.
+            Let us look at
+            `,
+            mkElt("span", { style: `color:${colorPartGrowing};` }, "that part"),
+            ":"
         ]),
         eltAssuming
     ]);
@@ -172,13 +175,13 @@ function buildMain() {
     }
 }
 
-drawStat(startEarth);
+// drawStat(startEarth);
 // throw Error("stop");
 drawXY();
 
 function drawXY() {
     // console.log({ modXY });
-    const canvasTime = document.getElementById(canvasTimeId);
+    const canvasTime = /** @type {HTMLCanvasElement} */ (document.getElementById(canvasTimeId));
     if (!canvasTime) {
         debugger;
         throw Error(`Could not find "${canvasTimeId}"`);
@@ -190,22 +193,54 @@ function drawXY() {
     const firstXY = getXY(2025, 2065);
     const optsXY = {
         dotRadius: -1,
-        maxY: 2.1
+        maxY: 2.1,
+        dataLineColor: colorPartGrowing
     }
     const objDiagram = modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
 
-    // Draw population current line
+    const dataFirstYears = getXY(2025, 2025 + yearGeneration);
+    modXY.drawDataXY(dataFirstYears, canvasTime.getContext("2d"), {
+        dataLineWidth: 40,
+        dataLineColor: "#aa06",
+        // dataLineColor: "blue",
+        dotRadius: -1,
+        dotColor: "red",
+        toCanvasX: objDiagram.toCanvasX,
+        toCanvasY: objDiagram.toCanvasY,
+    });
+
+
+
     // @ts-ignore
     const ctx = canvasTime.getContext("2d");
-    const y = objDiagram.toCanvasY(startAfrica);
+
+    // debugger;
+    // ctx.font = "16px Arial, sans-serif";
+    // ctx.fillStyle = "#311";
+    // const xB = objDiagram.toCanvasX(objDiagram.minX);
+    const xB = objDiagram.toCanvasX(2025);
+    const yB = objDiagram.toCanvasY(objDiagram.maxY);
+    ctx.font = "14px Arial, sans-serif";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "left";
+    ctx.fillText("Billion humans", xB - 10, yB - 10);
+
+    // Current population
+
     const x1 = objDiagram.toCanvasX(objDiagram.minX);
     const x2 = objDiagram.toCanvasX(objDiagram.maxX);
+    const y = objDiagram.toCanvasY(startAfrica);
     ctx.strokeStyle = "#311";
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.moveTo(x1, y);
     ctx.lineTo(x2, y);
     ctx.stroke();
+
+    ctx.font = "16px Arial, sans-serif";
+    ctx.fillStyle = "#311";
+    // ctx.fillText("Africa", x1 + 50, y - 10);
+    ctx.fillText("Africa", x1 + 10, y - 10);
 }
 function getXY(yrStart, yrEnd) {
     // const countryFactorYear = Math.pow(2.75, 1 / 20);
@@ -214,7 +249,7 @@ function getXY(yrStart, yrEnd) {
     console.log({ countryFactorYear });
     const countryYX = [];
     for (let x = yrStart; x <= yrEnd; x++) {
-        const y = startCountries * Math.pow(countryFactorYear, x - yrStart);
+        const y = startPartGrowing * Math.pow(countryFactorYear, x - yrStart);
         countryYX.push({ x, y });
         // console.log("y", y);
     }
@@ -244,7 +279,7 @@ export function drawStat(statBillions) {
         // FIX-ME: area
         // FIX-ME: maybe square instead of circle?
         // FIX-ME: Did I get the math correct now? (No! I do not have time to fix it at the moment...)
-        const radius = w3 * Math.sqrt(startCountries / statBillions);
+        const radius = w3 * Math.sqrt(startPartGrowing / statBillions);
         ctxStat.beginPath();
         ctxStat.arc(w / 2, w / 2, radius, 0, Math.PI * 2);
         ctxStat.fillStyle = "red";
@@ -346,7 +381,7 @@ function drawFixed() {
     // Country now
     const cXcountry = canvasEarthSize * 0.4;
     const cYcountry = canvasEarthSize * 0.4;
-    drawPopulation(cXcountry, cYcountry, startCountries, { width: 1, color: "red", fill: "red" })
+    drawPopulation(cXcountry, cYcountry, startPartGrowing, { width: 1, color: "red", fill: "red" })
 
     // Mean selection
     // drawPopulation(cXcountry, cYcountry, startCountry * 10, { width: 2, color: "black" });

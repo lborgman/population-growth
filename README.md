@@ -11,19 +11,19 @@
   </span>
 </div>
 
-An interactive view of a very simplified fictional population growth scenario.
+An interactive view of a fictional population growth scenario.
 
-The scenario has one country with a very high fertility rate. The rest of the population is stable. What does this lead to?
+The scenario is very simplified: It has one country with a very high fertility rate. The rest of the population is stable. What does this lead to?
 
 <figure>
   <img src="./img/earth-hands.png" alt="Trulli" style="width:50%; filter:grayscale(0.4) blur(2px);">
-  <figcaption style="color:gray; font-size:12px;">Don't we all have a dimmed view of our Earth?
+  <figcaption style="color:gray; font-size:12px;">Don't we all have a blurred view of our Earth?
   </figcaption>
 </figure>
 
 <p style="background:lightgray; padding:8px; font-size:12px; border-radius:8px;">
     Image credits Pixabay:
-  <a href="https://pixabay.com/illustrations/earth-earth-day-environment-ecology-8703270/">Trulli, Puglia, Italy</a>, 
+  <a href="https://pixabay.com/illustrations/earth-earth-day-environment-ecology-8703270/">* Trulli, Puglia, Italy</a>; 
   <a href="https://pixabay.com/vectors/world-earth-globe-planet-153534/">
-  OpenCliparts-Vectors</a>
+  * OpenCliparts-Vectors</a>
 </p>
