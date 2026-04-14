@@ -194,7 +194,8 @@ function drawXY() {
     const optsXY = {
         dotRadius: -1,
         maxY: 2.1,
-        dataLineColor: colorPartGrowing
+        dataLineColor: colorPartGrowing,
+        paddingTop: 50,
     }
     const objDiagram = modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
 
@@ -214,16 +215,12 @@ function drawXY() {
     // @ts-ignore
     const ctx = canvasTime.getContext("2d");
 
-    // debugger;
-    // ctx.font = "16px Arial, sans-serif";
-    // ctx.fillStyle = "#311";
-    // const xB = objDiagram.toCanvasX(objDiagram.minX);
     const xB = objDiagram.toCanvasX(2025);
     const yB = objDiagram.toCanvasY(objDiagram.maxY);
-    ctx.font = "14px Arial, sans-serif";
+    ctx.font = "16px Arial, sans-serif";
     ctx.fillStyle = "black";
     ctx.textAlign = "left";
-    ctx.fillText("Billion humans", xB - 10, yB - 10);
+    ctx.fillText("Billions of Humans per Year", xB, yB - 15);
 
     // Current population
 
@@ -237,10 +234,9 @@ function drawXY() {
     ctx.lineTo(x2, y);
     ctx.stroke();
 
-    ctx.font = "16px Arial, sans-serif";
+    ctx.font = "14px Arial, sans-serif";
     ctx.fillStyle = "#311";
-    // ctx.fillText("Africa", x1 + 50, y - 10);
-    ctx.fillText("Africa", x1 + 10, y - 10);
+    ctx.fillText("Africa population today", x1 + 10, y - 15);
 }
 function getXY(yrStart, yrEnd) {
     // const countryFactorYear = Math.pow(2.75, 1 / 20);

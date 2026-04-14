@@ -29,6 +29,7 @@ if (document.currentScript) { throw "canvas-xy.js is not loaded as module"; }
  * 
  * @param {string} [opts.labelColor]
  * @param {number} [opts.padding]
+ * @param {number} [opts.paddingTop]
  */
 export function drawXYDiagram(canvas, dataXY, opts = {}) {
     const defaultLineWidt = 1.5;
@@ -36,14 +37,12 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     const defaultGridColor = withAlpha(rootColor, 0.1);
     const defaultAxisColor = withAlpha(rootColor, 0.5);
     const defaultLabelColor = withAlpha(rootColor, 0.8);
+    const defaultPadding = 30;
     const {
-        // connectDots = true,
-        // axisColor = "#999999",
         axisColor = defaultAxisColor,
         axisLineWidth = defaultLineWidt,
 
         dataLineWidth = defaultLineWidt,
-        // dataLineColor = "red",
         dataLineColor = "#f00f",
 
         dotRadius = 4,
@@ -60,7 +59,8 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         minY = 0,
         maxY,
 
-        padding = 30, // FIX-ME:
+        padding = defaultPadding,
+        paddingTop = padding,
         ...rest
     } = opts;
     if (Object.keys(rest).length > 0) {
@@ -109,9 +109,13 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     // const maxY = opts.maxY ?? Math.max(...ys);
     const ourMaxY = maxY ?? Math.max(...ys);
 
+    const yMarkers = calculateNiceMarkers(maxY, gridCount - 0);
+    const yMarkW = Math.max(...yMarkers.map(val => ctx.measureText(val.toFixed(1)).width));
+    console.log({ yMarkers, yMarkW });
+
     // Map data coords → canvas pixels
-    const toCanvasX = x => padding + ((x - minX) / (maxX - minX)) * (W - padding * 2);
-    const toCanvasY = y => H - padding - ((y - minY) / (ourMaxY - minY)) * (H - padding * 2);
+    const toCanvasX = x => yMarkW + padding + ((x - minX) / (maxX - minX)) * (W - padding * 2);
+    const toCanvasY = y => H - padding - ((y - minY) / (ourMaxY - minY)) * (H - padding - paddingTop);
 
     drawAxisAndGrid();
     drawDataXY(dataXY, ctx,
@@ -125,24 +129,6 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
         }
     );
 
-    /*
-    const dataFirstYears = dataXY.filter(p => {
-        const year = parseFloat(p.x);
-        if (typeof year != "number") throw Error("not a number");
-        return year < minX + 20;
-    });
-    console.log(dataXY.length, dataFirstYears.length);
-    // console.log({ dataFirstYears });
-    // debugger;
-    drawDataXY(dataFirstYears, ctx, {
-        dataLineWidth: 30,
-        dataLineColor: "#aa06",
-        dotRadius,
-        dotColor,
-        toCanvasX,
-        toCanvasY,
-    });
-    */
 
     return {
         toCanvasX, toCanvasY,
@@ -153,28 +139,33 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     }
 
     function drawAxisAndGrid() {
+        if (!(ctx instanceof CanvasRenderingContext2D)) throw Error("bad ctx");
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = gridLineWidth;
-        const yMarkers = calculateNiceMarkers(maxY, gridCount - 0);
-        console.log({ yMarkers });
 
-        // yMarkers.forEach(yVal => {
+        const w0 = ctx.measureText("0").width * 1.2;
         for (let i = 0, len = yMarkers.length; i < len; i++) {
             const yVal = yMarkers[i];
             const cy = toCanvasY(yVal);
+
+            // Horizontal grid lines
             ctx.beginPath();
-            ctx.moveTo(padding, cy);
-            ctx.lineTo(W - padding, cy);
+            ctx.moveTo(padding + yMarkW, cy);
+            ctx.lineTo(W - padding , cy);
             ctx.stroke();
+
             // Y-axis labels
             ctx.fillStyle = labelColor;
             ctx.font = "12px sans-serif";
             ctx.textAlign = "center";
+            ctx.textAlign = "left";
             ctx.textAlign = "right";
-            ctx.fillText(yVal.toFixed(1), padding - 8, cy + 4);
+            ctx.textBaseline = "middle";
+            // ctx.fillText(yVal.toFixed(1), padding - yMarkW, cy);
+            ctx.fillText(yVal.toFixed(1), padding + yMarkW - w0, cy);
         }
 
-        // Draw grid lines
+        // Draw vertical grid lines
         ctx.strokeStyle = gridColor;
         ctx.lineWidth = gridLineWidth;
         for (let i = 0; i <= gridCount; i++) {
@@ -183,17 +174,9 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
 
             // Vertical grid line
             ctx.beginPath();
-            ctx.moveTo(cx, padding);
+            ctx.moveTo(cx, paddingTop);
             ctx.lineTo(cx, H - padding);
             ctx.stroke();
-
-            /*
-            // Horizontal grid line
-            ctx.beginPath();
-            ctx.moveTo(padding, cy);
-            ctx.lineTo(W - padding, cy);
-            ctx.stroke();
-            */
 
             // X-axis labels
             ctx.fillStyle = labelColor;
@@ -201,21 +184,17 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
             ctx.textAlign = "center";
             ctx.fillText(xVal.toFixed(0), cx, H - padding + 18);
 
-            /*
-            // Y-axis labels
-            ctx.textAlign = "right";
-            ctx.fillText(yVal.toFixed(1), padding - 8, cy + 4);
-            */
         }
 
         // Draw axes
         ctx.strokeStyle = axisColor;
-        // ctx.lineWidth = 1.5;
         ctx.lineWidth = axisLineWidth;
         ctx.beginPath();
-        ctx.moveTo(padding, padding);
-        ctx.lineTo(padding, H - padding);
-        ctx.lineTo(W - padding, H - padding);
+        // Vertical
+        ctx.moveTo(padding + yMarkW, paddingTop);
+        ctx.lineTo(padding + yMarkW, H - padding);
+        // Horizontal
+        ctx.lineTo(W - padding + yMarkW, H - padding);
         ctx.stroke();
     }
 
