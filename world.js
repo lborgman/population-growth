@@ -190,16 +190,18 @@ function drawXY() {
     canvasTime.width = bcr.width;
     canvasTime.height = bcr.height;
 
-    const firstXY = getXY(2025, 2065);
+    // const firstXY = getXY(2025, 2045, 2065);
+    const firstXY = getXY(2025, 2025 + yearGeneration, 2065);
     const optsXY = {
         dotRadius: -1,
         maxY: 2.1,
+        minX: 2025,
         dataLineColor: colorPartGrowing,
         paddingTop: 50,
     }
     const objDiagram = modXY.drawXYDiagram(canvasTime, firstXY, optsXY);
 
-    const dataFirstYears = getXY(2025, 2025 + yearGeneration);
+    const dataFirstYears = getXY(2025, 2025, 2025 + yearGeneration);
     modXY.drawDataXY(dataFirstYears, canvasTime.getContext("2d"), {
         dataLineWidth: 40,
         dataLineColor: "#aa06",
@@ -238,18 +240,30 @@ function drawXY() {
     ctx.fillStyle = "#311";
     ctx.fillText("Africa population today", x1 + 10, y - 15);
 }
-function getXY(yrStart, yrEnd) {
+
+/**
+ * 
+ * @param {number} firstYear 
+ * @param {number} yrStart 
+ * @param {number} yrEnd 
+ * @returns 
+ */
+function getXY(firstYear, yrStart, yrEnd) {
     // const countryFactorYear = Math.pow(2.75, 1 / 20);
     // const countryFactorYear = Math.pow(2.75, 1 / yearGeneration);
     const countryFactorYear = Math.pow(countryFertility / 2, 1 / yearGeneration);
     console.log({ countryFactorYear });
     const countryYX = [];
     for (let x = yrStart; x <= yrEnd; x++) {
-        const y = startPartGrowing * Math.pow(countryFactorYear, x - yrStart);
+        // const y = startPartGrowing * Math.pow(countryFactorYear, x - (yrStart - firstYear));
+        const y = startPartGrowing
+            * Math.pow(countryFactorYear, x - (yrStart))
+            * Math.pow(countryFactorYear, (yrStart - firstYear))
+            ;
         countryYX.push({ x, y });
         // console.log("y", y);
     }
-    console.log({ countryYX });
+    console.log({ firstYear, yrStart, yrEnd, countryYX });
     return countryYX;
 }
 

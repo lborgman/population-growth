@@ -58,6 +58,7 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
 
         minY = 0,
         maxY,
+        minX,
 
         padding = defaultPadding,
         paddingTop = padding,
@@ -104,17 +105,18 @@ export function drawXYDiagram(canvas, dataXY, opts = {}) {
     // Compute data bounds
     const xs = dataXY.map(p => p.x);
     const ys = dataXY.map(p => p.y);
-    const minX = opts.minX ?? Math.min(...xs);
+    // const minX = opts.minX ?? Math.min(...xs);
     const maxX = opts.maxX ?? Math.max(...xs);
     // const maxY = opts.maxY ?? Math.max(...ys);
     const ourMaxY = maxY ?? Math.max(...ys);
+    const ourMinX = minX ?? Math.min(...xs);
 
     const yMarkers = calculateNiceMarkers(maxY, gridCount - 0);
     const yMarkW = Math.max(...yMarkers.map(val => ctx.measureText(val.toFixed(1)).width));
     console.log({ yMarkers, yMarkW });
 
     // Map data coords → canvas pixels
-    const toCanvasX = x => yMarkW + padding + ((x - minX) / (maxX - minX)) * (W - padding * 2);
+    const toCanvasX = x => yMarkW + padding + ((x - ourMinX) / (maxX - ourMinX)) * (W - padding * 2);
     const toCanvasY = y => H - padding - ((y - minY) / (ourMaxY - minY)) * (H - padding - paddingTop);
 
     drawAxisAndGrid();
